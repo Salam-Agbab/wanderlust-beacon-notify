@@ -1,0 +1,139 @@
+
+<div class="profile-container">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Profile</h1>
+    <p class="text-gray-600">Manage your personal information</p>
+  </div>
+  
+  <div *ngIf="updateSuccess" class="mb-6 bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded">
+    <span class="block sm:inline">Your profile has been updated successfully.</span>
+  </div>
+  
+  <div *ngIf="updateError" class="mb-6 bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
+    <span class="block sm:inline">{{ updateError }}</span>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6">
+      <div class="flex flex-col md:flex-row">
+        <!-- Profile Image -->
+        <div class="md:w-1/3 mb-6 md:mb-0 flex flex-col items-center">
+          <div class="w-32 h-32 rounded-full overflow-hidden mb-4">
+            <img 
+              [src]="user?.profileImage || 'assets/default-avatar.png'" 
+              alt="Profile Image" 
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <button class="text-primary hover:text-primary-dark text-sm">
+            Change image
+          </button>
+        </div>
+        
+        <!-- Profile Form -->
+        <div class="md:w-2/3">
+          <form *ngIf="profileForm" [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <!-- Name -->
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name" 
+                class="input-field mt-1"
+                [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': f.name.touched && f.name.invalid}"
+              />
+              <div *ngIf="f.name.touched && f.name.errors" class="mt-1 text-red-500 text-xs">
+                <span *ngIf="f.name.errors.required">Name is required</span>
+                <span *ngIf="f.name.errors.minlength">Name must be at least 2 characters</span>
+              </div>
+            </div>
+            
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email" 
+                class="input-field mt-1"
+                [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': f.email.touched && f.email.invalid}"
+              />
+              <div *ngIf="f.email.touched && f.email.errors" class="mt-1 text-red-500 text-xs">
+                <span *ngIf="f.email.errors.required">Email is required</span>
+                <span *ngIf="f.email.errors.email">Please enter a valid email address</span>
+              </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-3">
+              <button 
+                type="button" 
+                (click)="onCancel()" 
+                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                [disabled]="isLoading || profileForm.invalid"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light disabled:opacity-50"
+              >
+                <span *ngIf="isLoading" class="mr-2">
+                  <svg class="animate-spin h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                {{ isLoading ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+      
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-sm font-medium text-gray-700">Account Type</h4>
+          <p class="text-sm text-gray-600">{{ user?.role === 'admin' ? 'Administrator' : 'User' }}</p>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-medium text-gray-700">Subscription Plan</h4>
+          <p class="text-sm text-gray-600">{{ user?.subscriptionType ? (user.subscriptionType | titlecase) : 'Free' }}</p>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-medium text-gray-700">Member Since</h4>
+          <p class="text-sm text-gray-600">June 15, 2023</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="px-6 py-4 border-t border-gray-200">
+      <h3 class="text-lg font-medium text-red-600 mb-4">Danger Zone</h3>
+      
+      <div class="space-y-4">
+        <div>
+          <h4 class="text-sm font-medium text-gray-900">Change Password</h4>
+          <p class="text-sm text-gray-600 mb-2">Update your password for better security</p>
+          <button class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            Change Password
+          </button>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-200">
+          <h4 class="text-sm font-medium text-gray-900">Delete Account</h4>
+          <p class="text-sm text-gray-600 mb-2">Once you delete your account, there is no going back. Please be certain.</p>
+          <button class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+            Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

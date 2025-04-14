@@ -1,0 +1,62 @@
+
+<div class="device-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+     [class.border-primary]="isSelected">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+             [ngStyle]="{'background-color': device.color}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-base font-medium text-gray-900">{{ device.name }}</h3>
+          <p class="text-sm text-gray-500">{{ device.owner }}</p>
+        </div>
+      </div>
+      <div>
+        <button (click)="$event.stopPropagation(); toggleActive()" 
+                [title]="device.isActive ? 'Deactivate device' : 'Activate device'" 
+                class="text-gray-400 hover:text-gray-500 p-1">
+          <span [ngClass]="{'text-green-500': device.isActive, 'text-gray-400': !device.isActive}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4 mb-3">
+      <div>
+        <p class="text-xs text-gray-500">Last seen</p>
+        <p class="text-sm">{{ getTimeAgo(device.lastSeen) }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500">Battery</p>
+        <p [ngClass]="getBatteryClass(device.batteryLevel)" class="text-sm flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          {{ device.batteryLevel ? device.batteryLevel + '%' : 'Unknown' }}
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-gray-50 p-3 border-t border-gray-200 flex justify-between">
+    <button (click)="$event.stopPropagation(); select.emit(device.id)" 
+            class="text-primary hover:text-primary-dark text-sm font-medium">
+      Locate
+    </button>
+    <button (click)="$event.stopPropagation(); edit.emit(device)" 
+            class="text-primary hover:text-primary-dark text-sm font-medium">
+      Edit
+    </button>
+    <button (click)="$event.stopPropagation(); delete.emit(device.id)" 
+            class="text-red-500 hover:text-red-700 text-sm font-medium">
+      Remove
+    </button>
+  </div>
+</div>

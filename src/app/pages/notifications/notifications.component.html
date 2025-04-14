@@ -1,0 +1,138 @@
+
+<div class="notifications-container">
+  <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-800">Notifications</h1>
+      <p class="text-gray-600">View and manage your notifications</p>
+    </div>
+    <div class="mt-4 md:mt-0">
+      <button (click)="markAllAsRead()" 
+              [disabled]="isLoading || notifications.every(n => n.read)" 
+              class="btn-primary flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        Mark All as Read
+      </button>
+    </div>
+  </div>
+  
+  <!-- Filters -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <button (click)="applyFilter('all')" 
+            [class.bg-primary]="selectedFilter === 'all'"
+            [class.text-white]="selectedFilter === 'all'"
+            [class.bg-white]="selectedFilter !== 'all'"
+            [class.text-gray-700]="selectedFilter !== 'all'"
+            class="px-4 py-2 rounded-md shadow-sm text-sm font-medium border transition-colors">
+      All
+    </button>
+    <button (click)="applyFilter('unread')" 
+            [class.bg-primary]="selectedFilter === 'unread'"
+            [class.text-white]="selectedFilter === 'unread'"
+            [class.bg-white]="selectedFilter !== 'unread'"
+            [class.text-gray-700]="selectedFilter !== 'unread'"
+            class="px-4 py-2 rounded-md shadow-sm text-sm font-medium border transition-colors">
+      Unread
+    </button>
+    <button (click)="applyFilter('geofence')" 
+            [class.bg-primary]="selectedFilter === 'geofence'"
+            [class.text-white]="selectedFilter === 'geofence'"
+            [class.bg-white]="selectedFilter !== 'geofence'"
+            [class.text-gray-700]="selectedFilter !== 'geofence'"
+            class="px-4 py-2 rounded-md shadow-sm text-sm font-medium border transition-colors">
+      Geofence
+    </button>
+    <button (click)="applyFilter('battery')" 
+            [class.bg-primary]="selectedFilter === 'battery'"
+            [class.text-white]="selectedFilter === 'battery'"
+            [class.bg-white]="selectedFilter !== 'battery'"
+            [class.text-gray-700]="selectedFilter !== 'battery'"
+            class="px-4 py-2 rounded-md shadow-sm text-sm font-medium border transition-colors">
+      Battery
+    </button>
+    <button (click)="applyFilter('system')" 
+            [class.bg-primary]="selectedFilter === 'system'"
+            [class.text-white]="selectedFilter === 'system'"
+            [class.bg-white]="selectedFilter !== 'system'"
+            [class.text-gray-700]="selectedFilter !== 'system'"
+            class="px-4 py-2 rounded-md shadow-sm text-sm font-medium border transition-colors">
+      System
+    </button>
+  </div>
+  
+  <!-- Notifications List -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div *ngIf="isLoading" class="p-6 text-center">
+      <svg class="animate-spin h-8 w-8 text-primary mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="mt-2 text-gray-500">Loading notifications...</p>
+    </div>
+    
+    <div *ngIf="!isLoading && notifications.length === 0" class="p-6 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+      <h3 class="mt-2 text-lg font-medium text-gray-900">No notifications</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {{ selectedFilter === 'all' ? 'You don\'t have any notifications yet.' : 'No notifications match the selected filter.' }}
+      </p>
+    </div>
+    
+    <div *ngIf="!isLoading && notifications.length > 0" class="divide-y divide-gray-200">
+      <div *ngFor="let notification of notifications" 
+           [class.bg-gray-50]="!notification.read" 
+           class="p-4 hover:bg-gray-50 transition-colors">
+        <div class="flex items-start">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+               [ngStyle]="{'background-color': notification.color + '33', 'color': notification.color}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+          <div class="ml-3 flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-medium text-gray-900">{{ notification.title }}</h3>
+              <div class="flex items-center">
+                <span class="text-xs bg-gray-100 text-gray-800 py-1 px-2 rounded-full">
+                  {{ getNotificationTypeText(notification.type) }}
+                </span>
+                <div class="ml-2 flex space-x-2">
+                  <button 
+                    *ngIf="!notification.read" 
+                    (click)="markAsRead(notification.id)" 
+                    class="text-primary hover:text-primary-dark"
+                    title="Mark as read"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+                  <button 
+                    (click)="deleteNotification(notification.id)" 
+                    class="text-gray-400 hover:text-red-500"
+                    title="Delete"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="mt-1 text-sm text-gray-600">{{ notification.message }}</p>
+            <div class="mt-2 flex items-center text-xs text-gray-500">
+              <span>{{ getFormattedDate(notification.timestamp) }}</span>
+              <span class="mx-1">&bull;</span>
+              <span>{{ getTimeAgo(notification.timestamp) }}</span>
+              <span *ngIf="notification.deviceName" class="mx-1">&bull;</span>
+              <span *ngIf="notification.deviceName">{{ notification.deviceName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

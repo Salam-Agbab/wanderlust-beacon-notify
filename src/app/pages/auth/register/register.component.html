@@ -1,0 +1,194 @@
+
+<div class="min-h-screen bg-background-light flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <img class="mx-auto h-12 w-auto" src="assets/logo.svg" alt="BeaconTrack Logo" />
+    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+      Create your account
+    </h2>
+    <p class="mt-2 text-center text-sm text-gray-600">
+      Already registered?
+      <a routerLink="/login" class="font-medium text-primary hover:text-primary-dark">
+        Sign in to your account
+      </a>
+    </p>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Error message -->
+        <div *ngIf="errorMessage" class="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">
+            Full name
+          </label>
+          <div class="mt-1">
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              autocomplete="name"
+              [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': hasError('name', 'required') || hasError('name', 'minlength')}"
+              class="input-field"
+            />
+          </div>
+          <div *ngIf="hasError('name', 'required')" class="mt-1 text-red-500 text-xs">
+            Name is required
+          </div>
+          <div *ngIf="hasError('name', 'minlength')" class="mt-1 text-red-500 text-xs">
+            Name must be at least 2 characters
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Email address
+          </label>
+          <div class="mt-1">
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': hasError('email', 'required') || hasError('email', 'email')}"
+              class="input-field"
+            />
+          </div>
+          <div *ngIf="hasError('email', 'required')" class="mt-1 text-red-500 text-xs">
+            Email is required
+          </div>
+          <div *ngIf="hasError('email', 'email')" class="mt-1 text-red-500 text-xs">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div class="mt-1">
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+              [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': hasError('password', 'required') || hasError('password', 'minlength')}"
+              class="input-field"
+            />
+          </div>
+          <div *ngIf="hasError('password', 'required')" class="mt-1 text-red-500 text-xs">
+            Password is required
+          </div>
+          <div *ngIf="hasError('password', 'minlength')" class="mt-1 text-red-500 text-xs">
+            Password must be at least 6 characters
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+            Confirm password
+          </label>
+          <div class="mt-1">
+            <input
+              id="confirmPassword"
+              type="password"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+              [ngClass]="{'border-red-300 focus:ring-red-500 focus:border-red-500': hasError('confirmPassword', 'required') || registerForm.hasError('notMatching')}"
+              class="input-field"
+            />
+          </div>
+          <div *ngIf="hasError('confirmPassword', 'required')" class="mt-1 text-red-500 text-xs">
+            Please confirm your password
+          </div>
+          <div *ngIf="registerForm.hasError('notMatching') && f.confirmPassword.touched" class="mt-1 text-red-500 text-xs">
+            Passwords do not match
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input
+              id="terms"
+              formControlName="terms"
+              type="checkbox"
+              class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+              [ngClass]="{'border-red-300 focus:ring-red-500': hasError('terms', 'required')}"
+            />
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="terms" class="font-medium text-gray-700">
+              I agree to the <a href="#" class="text-primary hover:text-primary-dark">Terms and Conditions</a> and <a href="#" class="text-primary hover:text-primary-dark">Privacy Policy</a>
+            </label>
+            <div *ngIf="hasError('terms', 'required')" class="mt-1 text-red-500 text-xs">
+              You must agree to the terms and conditions
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <div>
+          <button
+            type="submit"
+            [disabled]="isLoading"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light disabled:opacity-50"
+          >
+            <span *ngIf="isLoading" class="mr-2">
+              <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{ isLoading ? 'Creating account...' : 'Create account' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Alternative sign up methods -->
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">
+              Or register with
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-3">
+          <div>
+            <a
+              href="#"
+              class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.0001 2.19995C6.47812 2.19995 2.00012 6.67815 2.00012 12.2C2.00012 16.7001 5.00813 20.4 9.11613 21.8C9.11613 21.8 9.51613 21.9001 9.64413 21.9001C9.86613 21.9001 9.80013 21.7 9.80013 21.5V19.9C6.97213 20.4 6.52013 18.6 6.52013 18.6C6.34813 17.9 5.95613 17.6 5.95613 17.6C5.39213 17.2 5.95613 17.2 5.95613 17.2C6.60413 17.3 6.93613 18 6.93613 18C7.47213 19.1 8.48413 18.6 9.11613 18.4C9.11613 17.8 9.34413 17.5 9.57213 17.3C7.36413 17.1 5.27613 16.3001 5.27613 12.4C5.27613 11.3 5.60813 10.3001 6.17213 9.60005C6.05613 9.30005 5.75213 8.30005 6.28813 7.00005C6.28813 7.00005 6.78613 6.80005 7.92413 7.60005C8.58613 7.40005 9.28813 7.30005 9.99013 7.30005C10.6921 7.30005 11.3941 7.40005 12.0561 7.60005C13.1941 6.80005 13.6921 7.00005 13.6921 7.00005C14.2281 8.30005 13.9241 9.30005 13.8081 9.60005C14.3721 10.3001 14.7041 11.3 14.7041 12.4C14.7041 16.3001 12.6161 17.1 10.4081 17.3C10.7041 17.6 10.9921 18.0999 10.9921 18.9V21.6C10.9921 21.8 10.9261 22 11.1481 22C11.2761 22 11.5541 21.9001 11.8841 21.8C16.0001 20.4 19.0001 16.7001 19.0001 12.2C19.0001 6.67815 14.5221 2.19995 12.0001 2.19995Z" />
+              </svg>
+            </a>
+          </div>
+
+          <div>
+            <a
+              href="#"
+              class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22.675 0H1.325C0.593 0 0 0.593 0 1.325v21.351C0 23.407 0.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463 0.099 2.795 0.143v3.24l-1.918 0.001c-1.504 0-1.795 0.715-1.795 1.763v2.313h3.587l-0.467 3.622h-3.12V24h6.116c0.73 0 1.323-0.593 1.323-1.325V1.325C24 0.593 23.407 0 22.675 0z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

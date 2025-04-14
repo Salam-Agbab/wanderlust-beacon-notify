@@ -1,0 +1,163 @@
+
+<div class="dashboard-container">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+    <p class="text-gray-600">Track and manage your devices</p>
+  </div>
+  
+  <!-- Device Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-medium text-gray-800">Devices</h2>
+        <button 
+          (click)="viewAllDevices()" 
+          class="text-primary hover:text-primary-dark text-sm flex items-center"
+        >
+          View All
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <div *ngFor="let device of devices" 
+             [class.bg-gray-50]="selectedDeviceId === device.id"
+             class="p-2 rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
+             (click)="selectDevice(device.id)"
+        >
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-primary-light rounded-full flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div class="ml-3 flex-1">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-gray-900">{{ device.name }}</p>
+                <p 
+                  *ngIf="device.batteryLevel" 
+                  [ngClass]="getDeviceBatteryClass(device.batteryLevel)"
+                  class="text-xs font-medium"
+                >
+                  {{ device.batteryLevel }}%
+                </p>
+              </div>
+              <p class="text-xs text-gray-500">
+                Owner: {{ device.owner }}
+                <span *ngIf="device.lastSeen" class="ml-2">&bull; Last seen: {{ getTimeAgo(device.lastSeen) }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-medium text-gray-800">Recent Notifications</h2>
+        <button 
+          (click)="viewAllNotifications()" 
+          class="text-primary hover:text-primary-dark text-sm flex items-center"
+        >
+          View All
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <div *ngFor="let notification of notifications" 
+             class="p-2 rounded-md hover:bg-gray-50 transition-colors"
+        >
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" 
+                 [ngStyle]="{'background-color': notification.color + '33'}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" [ngStyle]="{'color': notification.color}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </div>
+            <div class="ml-3 flex-1">
+              <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+              <p class="text-xs text-gray-500">{{ getTimeAgo(notification.timestamp) }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="notifications.length === 0" class="text-center py-2 text-gray-500 text-sm">
+          No recent notifications
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-medium text-gray-800">Your Subscription</h2>
+      </div>
+      <div *ngIf="currentPlan" class="p-3 border rounded-lg" 
+           [ngClass]="{'border-primary-light bg-primary-light bg-opacity-10': currentPlan.id !== 'free'}">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">{{ currentPlan.name }} Plan</h3>
+            <p class="text-sm text-gray-600">
+              {{ currentPlan.id === 'free' ? 'Free forever' : '$' + currentPlan.price + '/month' }}
+            </p>
+          </div>
+          <span *ngIf="currentPlan.id !== 'free'" class="text-xs bg-green-100 text-green-800 rounded-full px-2 py-1">
+            Active
+          </span>
+        </div>
+        
+        <div class="mt-4 space-y-2">
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-sm">{{ currentPlan.maxDevices }} device{{ currentPlan.maxDevices !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-sm">{{ currentPlan.historyRetention }} days history</span>
+          </div>
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-sm">{{ currentPlan.maxGeofences }} geofence{{ currentPlan.maxGeofences !== 1 ? 's' : '' }}</span>
+          </div>
+        </div>
+        
+        <button 
+          *ngIf="currentPlan.id === 'free'"
+          (click)="upgradePlan()" 
+          class="mt-4 w-full bg-secondary hover:bg-secondary-dark text-white py-2 rounded-md text-sm font-medium transition-colors"
+        >
+          Upgrade Plan
+        </button>
+        <button 
+          *ngIf="currentPlan.id !== 'free'"
+          (click)="upgradePlan()" 
+          class="mt-4 w-full border border-primary text-primary hover:bg-primary hover:text-white py-2 rounded-md text-sm font-medium transition-colors"
+        >
+          Manage Subscription
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Map Section -->
+  <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-medium text-gray-800">Location Map</h2>
+    </div>
+    <app-map-view 
+      [locations]="locations" 
+      [geofences]="geofences"
+      [selectedDeviceId]="selectedDeviceId"
+      height="500px"
+    ></app-map-view>
+  </div>
+</div>

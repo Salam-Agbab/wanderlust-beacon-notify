@@ -1,0 +1,83 @@
+
+<div class="geofence-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+             [ngStyle]="{'background-color': geofence.color + '33', 'color': geofence.color}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-base font-medium text-gray-900">{{ geofence.name }}</h3>
+          <p class="text-sm text-gray-500">{{ geofence.type | titlecase }} • {{ geofence.radius }}m radius</p>
+        </div>
+      </div>
+      <div>
+        <button (click)="toggleExpand()" class="text-gray-400 hover:text-gray-500 p-1">
+          <svg *ngIf="!isExpanded" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+          <svg *ngIf="isExpanded" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="isExpanded" class="mt-4">
+      <div *ngIf="geofence.address" class="mb-3">
+        <p class="text-xs text-gray-500">Address</p>
+        <p class="text-sm">{{ geofence.address }}</p>
+      </div>
+      
+      <div class="mb-3">
+        <p class="text-xs text-gray-500">Monitored devices</p>
+        <div *ngIf="geofence.devices.length === 0" class="text-sm text-gray-400">
+          No devices are being monitored
+        </div>
+        <div *ngFor="let deviceId of geofence.devices" class="flex items-center mt-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span class="text-sm">{{ getDeviceName(deviceId) }}</span>
+        </div>
+      </div>
+      
+      <div class="mb-3">
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-gray-500">Notifications</p>
+          <button 
+            (click)="toggleNotifications()" 
+            [ngClass]="{'bg-primary': geofence.notifications, 'bg-gray-200': !geofence.notifications}"
+            class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+          >
+            <span 
+              [ngClass]="{'translate-x-5': geofence.notifications, 'translate-x-0': !geofence.notifications}"
+              class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+            ></span>
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 mt-1">
+          {{ geofence.notifications ? 'Notifications are enabled for this geofence' : 'Notifications are disabled for this geofence' }}
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-gray-50 p-3 border-t border-gray-200 flex justify-between">
+    <div class="text-sm text-gray-600">
+      {{ getDeviceCount() }}
+    </div>
+    <div>
+      <button (click)="edit.emit(geofence)" class="text-primary hover:text-primary-dark text-sm font-medium mr-4">
+        Edit
+      </button>
+      <button (click)="delete.emit(geofence.id)" class="text-red-500 hover:text-red-700 text-sm font-medium">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

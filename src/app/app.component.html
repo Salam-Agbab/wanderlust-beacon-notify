@@ -1,0 +1,18 @@
+
+<div class="app-container min-h-screen flex flex-col">
+  <!-- Show header only when logged in -->
+  <app-header *ngIf="isLoggedIn && !isAuthPage"></app-header>
+  
+  <div class="flex flex-1">
+    <!-- Show sidenav only when logged in -->
+    <app-side-nav *ngIf="isLoggedIn && !isAuthPage"></app-side-nav>
+    
+    <!-- Main content -->
+    <main class="flex-1 p-4 md:p-6 bg-background-light">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+  
+  <!-- Show footer on all pages -->
+  <app-footer></app-footer>
+</div>

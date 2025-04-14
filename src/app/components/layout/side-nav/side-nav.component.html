@@ -1,0 +1,63 @@
+
+<!-- Desktop sidebar -->
+<aside class="w-64 hidden md:block bg-white border-r border-gray-200 min-h-screen">
+  <nav class="mt-5 px-2">
+    <div class="space-y-1">
+      <ng-container *ngFor="let item of navItems">
+        <a 
+          [routerLink]="item.path" 
+          [class.bg-primary-light]="isActive(item.path)"
+          [class.text-white]="isActive(item.path)"
+          [class.text-gray-700]="!isActive(item.path)"
+          class="group flex items-center px-2 py-2 text-sm font-medium rounded-md hover:bg-primary-light hover:text-white transition-colors duration-200"
+          [innerHtml]="item.icon + item.label"
+        ></a>
+      </ng-container>
+    </div>
+  </nav>
+</aside>
+
+<!-- Mobile menu button -->
+<div class="md:hidden fixed bottom-4 right-4 z-50">
+  <button 
+    (click)="toggleMobileMenu()"
+    class="bg-primary text-white rounded-full p-3 shadow-lg hover:bg-primary-dark transition-colors"
+  >
+    <svg *ngIf="!isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <svg *ngIf="isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>
+
+<!-- Mobile menu -->
+<div 
+  *ngIf="isMobileMenuOpen" 
+  class="fixed inset-0 flex z-40 md:hidden"
+  (click)="closeMobileMenu()"
+>
+  <div class="fixed inset-0 bg-gray-600 bg-opacity-75"></div>
+  <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white" (click)="$event.stopPropagation()">
+    <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+      <div class="flex-shrink-0 flex items-center px-4">
+        <img class="h-8 w-auto" src="assets/logo.svg" alt="BeaconTrack Logo">
+        <span class="ml-2 text-xl font-bold text-primary">BeaconTrack</span>
+      </div>
+      <nav class="mt-5 px-2 space-y-1">
+        <ng-container *ngFor="let item of navItems">
+          <a 
+            [routerLink]="item.path" 
+            (click)="closeMobileMenu()"
+            [class.bg-primary-light]="isActive(item.path)"
+            [class.text-white]="isActive(item.path)"
+            [class.text-gray-700]="!isActive(item.path)"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md hover:bg-primary-light hover:text-white transition-colors duration-200"
+            [innerHtml]="item.icon + item.label"
+          ></a>
+        </ng-container>
+      </nav>
+    </div>
+  </div>
+</div>

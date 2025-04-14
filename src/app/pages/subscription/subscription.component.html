@@ -1,0 +1,174 @@
+
+<div class="subscription-container">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Subscription</h1>
+    <p class="text-gray-600">Manage your subscription plan</p>
+  </div>
+  
+  <div *ngIf="subscriptionSuccess" class="mb-6 bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded relative">
+    <span class="block sm:inline">Your subscription has been updated successfully.</span>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <h2 class="text-lg font-semibold mb-4">Current Plan</h2>
+    
+    <div *ngIf="currentPlan" class="p-4 border rounded-lg" 
+         [ngClass]="{'border-primary-light bg-primary-light bg-opacity-10': currentPlan.id !== 'free'}">
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="font-semibold">{{ currentPlan.name }} Plan</h3>
+          <p class="text-sm text-gray-600">
+            {{ currentPlan.id === 'free' ? 'Free forever' : formatCurrency(currentPlan.price) + '/' + currentPlan.billingPeriod }}
+          </p>
+        </div>
+        <span *ngIf="currentPlan.id !== 'free'" class="text-xs bg-green-100 text-green-800 rounded-full px-2 py-1">
+          Active
+        </span>
+      </div>
+      
+      <div class="mt-4 space-y-2">
+        <div *ngFor="let feature of currentPlan.features" class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          <span class="text-sm">{{ feature }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold mb-4">Available Plans</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div *ngFor="let plan of subscriptionPlans"
+           [class.border-primary]="isPlanActive(plan.id)"
+           [class.shadow-md]="plan.isPopular"
+           class="border rounded-lg p-4 relative"
+      >
+        <div *ngIf="plan.isPopular" class="absolute top-0 right-0 bg-secondary text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg">
+          Most Popular
+        </div>
+        
+        <div *ngIf="isPlanActive(plan.id)" class="absolute top-0 right-0 bg-green-500 text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg">
+          Current Plan
+        </div>
+        
+        <h3 class="text-xl font-semibold">{{ plan.name }}</h3>
+        <div class="mt-2 mb-4">
+          <span class="text-2xl font-bold">${{ plan.price }}</span>
+          <span class="text-gray-500">/{{ plan.billingPeriod }}</span>
+        </div>
+        
+        <div class="space-y-3 mb-6">
+          <div *ngFor="let feature of plan.features" class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="text-sm">{{ feature }}</span>
+          </div>
+        </div>
+        
+        <button 
+          (click)="selectPlan(plan)" 
+          [disabled]="isPlanActive(plan.id) || isProcessing"
+          [ngClass]="{
+            'bg-primary hover:bg-primary-dark': !isPlanActive(plan.id),
+            'bg-gray-300 cursor-not-allowed': isPlanActive(plan.id)
+          }"
+          class="w-full py-2 rounded-md text-white font-medium transition-colors"
+        >
+          {{ isPlanActive(plan.id) ? 'Current Plan' : 'Select Plan' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Payment Modal -->
+  <div *ngIf="showPaymentModal" class="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          Payment Information
+        </h3>
+        <p class="text-sm text-gray-500">
+          Add a payment method to complete your subscription
+        </p>
+      </div>
+      
+      <form [formGroup]="paymentForm" (ngSubmit)="submitPaymentForm()">
+        <div class="px-6 py-4 space-y-4">
+          <!-- Cardholder Name -->
+          <div>
+            <label for="cardholderName" class="block text-sm font-medium text-gray-700">Cardholder Name</label>
+            <input type="text" id="cardholderName" formControlName="cardholderName" placeholder="John Doe" class="input-field mt-1" />
+            <div *ngIf="paymentForm.get('cardholderName')?.touched && paymentForm.get('cardholderName')?.errors" class="text-xs text-red-500 mt-1">
+              Cardholder name is required
+            </div>
+          </div>
+          
+          <!-- Card Number -->
+          <div>
+            <label for="cardNumber" class="block text-sm font-medium text-gray-700">Card Number</label>
+            <input type="text" id="cardNumber" formControlName="cardNumber" placeholder="1234 5678 9012 3456" class="input-field mt-1" />
+            <div *ngIf="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.errors" class="text-xs text-red-500 mt-1">
+              Valid card number is required (16 digits)
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Expiry Date -->
+            <div>
+              <label for="expiryDate" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+              <input type="text" id="expiryDate" formControlName="expiryDate" placeholder="MM/YY" class="input-field mt-1" />
+              <div *ngIf="paymentForm.get('expiryDate')?.touched && paymentForm.get('expiryDate')?.errors" class="text-xs text-red-500 mt-1">
+                Valid expiry date required (MM/YY)
+              </div>
+            </div>
+            
+            <!-- CVV -->
+            <div>
+              <label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
+              <input type="text" id="cvv" formControlName="cvv" placeholder="123" class="input-field mt-1" />
+              <div *ngIf="paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.errors" class="text-xs text-red-500 mt-1">
+                Valid CVV required (3-4 digits)
+              </div>
+            </div>
+          </div>
+          
+          <!-- Save Card -->
+          <div class="flex items-center">
+            <input type="checkbox" id="saveCard" formControlName="saveCard" class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded" />
+            <label for="saveCard" class="ml-2 block text-sm text-gray-900">
+              Save card for future payments
+            </label>
+          </div>
+        </div>
+        
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+          <button 
+            type="button" 
+            (click)="closePaymentModal()" 
+            [disabled]="isProcessing"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="isProcessing"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-light disabled:opacity-50"
+          >
+            <span *ngIf="isProcessing" class="mr-2">
+              <svg class="animate-spin h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{ isProcessing ? 'Processing...' : 'Complete Payment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

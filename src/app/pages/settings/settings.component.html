@@ -1,0 +1,362 @@
+
+<div class="settings-container">
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800">Settings</h1>
+    <p class="text-gray-600">Manage your application preferences</p>
+  </div>
+  
+  <div *ngIf="updateSuccess" class="mb-6 bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded">
+    <span class="block sm:inline">Your settings have been updated successfully.</span>
+  </div>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
+    <!-- Sidebar -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="font-medium text-gray-800">Settings</h2>
+        </div>
+        <nav class="space-y-1">
+          <a href="#notifications" class="block px-4 py-2 hover:bg-gray-50 text-primary">
+            Notifications
+          </a>
+          <a href="#privacy" class="block px-4 py-2 hover:bg-gray-50 text-gray-700">
+            Privacy
+          </a>
+          <a href="#general" class="block px-4 py-2 hover:bg-gray-50 text-gray-700">
+            General
+          </a>
+          <a href="#account" class="block px-4 py-2 hover:bg-gray-50 text-gray-700">
+            Account
+          </a>
+        </nav>
+      </div>
+    </div>
+    
+    <!-- Main content -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Notification Settings -->
+      <div id="notifications" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="font-medium text-gray-800">Notification Settings</h2>
+        </div>
+        
+        <div class="p-4">
+          <form [formGroup]="notificationSettings" (ngSubmit)="saveNotificationSettings()">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Email Notifications</h3>
+                  <p class="text-xs text-gray-500">Receive important alerts via email</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': notificationSettings.get('emailNotifications')?.value, 'bg-gray-200': !notificationSettings.get('emailNotifications')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="notificationSettings.get('emailNotifications')?.setValue(!notificationSettings.get('emailNotifications')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': notificationSettings.get('emailNotifications')?.value, 'translate-x-0': !notificationSettings.get('emailNotifications')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Push Notifications</h3>
+                  <p class="text-xs text-gray-500">Get real-time alerts on your device</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': notificationSettings.get('pushNotifications')?.value, 'bg-gray-200': !notificationSettings.get('pushNotifications')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="notificationSettings.get('pushNotifications')?.setValue(!notificationSettings.get('pushNotifications')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': notificationSettings.get('pushNotifications')?.value, 'translate-x-0': !notificationSettings.get('pushNotifications')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="pt-4 border-t border-gray-200">
+                <h3 class="text-sm font-medium text-gray-700 mb-3">Alert Types</h3>
+                
+                <div class="space-y-3">
+                  <div class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      id="geofenceAlerts" 
+                      formControlName="geofenceAlerts"
+                      class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+                    />
+                    <label for="geofenceAlerts" class="ml-2 block text-sm text-gray-900">
+                      Geofence Alerts
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      id="lowBatteryAlerts" 
+                      formControlName="lowBatteryAlerts"
+                      class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+                    />
+                    <label for="lowBatteryAlerts" class="ml-2 block text-sm text-gray-900">
+                      Low Battery Alerts
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      id="deviceOfflineAlerts" 
+                      formControlName="deviceOfflineAlerts"
+                      class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+                    />
+                    <label for="deviceOfflineAlerts" class="ml-2 block text-sm text-gray-900">
+                      Device Offline Alerts
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      id="speedAlerts" 
+                      formControlName="speedAlerts"
+                      class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+                    />
+                    <label for="speedAlerts" class="ml-2 block text-sm text-gray-900">
+                      Speed Alerts
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      type="checkbox" 
+                      id="systemUpdates" 
+                      formControlName="systemUpdates"
+                      class="h-4 w-4 text-primary focus:ring-primary-light border-gray-300 rounded"
+                    />
+                    <label for="systemUpdates" class="ml-2 block text-sm text-gray-900">
+                      System Updates
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+              <button type="submit" class="btn-primary">
+                Save Notification Settings
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Privacy Settings -->
+      <div id="privacy" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="font-medium text-gray-800">Privacy Settings</h2>
+        </div>
+        
+        <div class="p-4">
+          <form [formGroup]="privacySettings" (ngSubmit)="savePrivacySettings()">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Share Location Data</h3>
+                  <p class="text-xs text-gray-500">Allow sharing of anonymized location data to improve services</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': privacySettings.get('shareLocationData')?.value, 'bg-gray-200': !privacySettings.get('shareLocationData')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="privacySettings.get('shareLocationData')?.setValue(!privacySettings.get('shareLocationData')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': privacySettings.get('shareLocationData')?.value, 'translate-x-0': !privacySettings.get('shareLocationData')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Allow Anonymous Usage Data</h3>
+                  <p class="text-xs text-gray-500">Help us improve by sending anonymous usage statistics</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': privacySettings.get('allowAnonymousUsageData')?.value, 'bg-gray-200': !privacySettings.get('allowAnonymousUsageData')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="privacySettings.get('allowAnonymousUsageData')?.setValue(!privacySettings.get('allowAnonymousUsageData')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': privacySettings.get('allowAnonymousUsageData')?.value, 'translate-x-0': !privacySettings.get('allowAnonymousUsageData')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Show Device Names to Friends</h3>
+                  <p class="text-xs text-gray-500">Display your device names to friends who have access</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': privacySettings.get('showDeviceNamesToFriends')?.value, 'bg-gray-200': !privacySettings.get('showDeviceNamesToFriends')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="privacySettings.get('showDeviceNamesToFriends')?.setValue(!privacySettings.get('showDeviceNamesToFriends')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': privacySettings.get('showDeviceNamesToFriends')?.value, 'translate-x-0': !privacySettings.get('showDeviceNamesToFriends')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-700">Show Exact Location</h3>
+                  <p class="text-xs text-gray-500">Display precise location instead of approximate area</p>
+                </div>
+                <div>
+                  <button 
+                    type="button"
+                    [ngClass]="{'bg-primary': privacySettings.get('showExactLocation')?.value, 'bg-gray-200': !privacySettings.get('showExactLocation')?.value}"
+                    class="relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200"
+                    (click)="privacySettings.get('showExactLocation')?.setValue(!privacySettings.get('showExactLocation')?.value)"
+                  >
+                    <span 
+                      [ngClass]="{'translate-x-5': privacySettings.get('showExactLocation')?.value, 'translate-x-0': !privacySettings.get('showExactLocation')?.value}"
+                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                    ></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+              <button type="submit" class="btn-primary">
+                Save Privacy Settings
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- General Settings -->
+      <div id="general" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="font-medium text-gray-800">General Settings</h2>
+        </div>
+        
+        <div class="p-4">
+          <form [formGroup]="generalSettings" (ngSubmit)="saveGeneralSettings()">
+            <div class="space-y-4">
+              <div>
+                <label for="distanceUnit" class="block text-sm font-medium text-gray-700">Distance Unit</label>
+                <select 
+                  id="distanceUnit" 
+                  formControlName="distanceUnit"
+                  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                >
+                  <option value="miles">Miles</option>
+                  <option value="kilometers">Kilometers</option>
+                </select>
+              </div>
+              
+              <div>
+                <label for="timeFormat" class="block text-sm font-medium text-gray-700">Time Format</label>
+                <select 
+                  id="timeFormat" 
+                  formControlName="timeFormat"
+                  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                >
+                  <option value="12h">12-hour (AM/PM)</option>
+                  <option value="24h">24-hour</option>
+                </select>
+              </div>
+              
+              <div>
+                <label for="language" class="block text-sm font-medium text-gray-700">Language</label>
+                <select 
+                  id="language" 
+                  formControlName="language"
+                  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                >
+                  <option value="english">English</option>
+                  <option value="spanish">Spanish</option>
+                  <option value="french">French</option>
+                  <option value="german">German</option>
+                  <option value="japanese">Japanese</option>
+                </select>
+              </div>
+              
+              <div>
+                <label for="autoRefreshInterval" class="block text-sm font-medium text-gray-700">Auto-refresh Interval (seconds)</label>
+                <select 
+                  id="autoRefreshInterval" 
+                  formControlName="autoRefreshInterval"
+                  class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                >
+                  <option value="30">30 seconds</option>
+                  <option value="60">1 minute</option>
+                  <option value="300">5 minutes</option>
+                  <option value="600">10 minutes</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+              <button type="submit" class="btn-primary">
+                Save General Settings
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Account Settings -->
+      <div id="account" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="font-medium text-gray-800">Account Settings</h2>
+        </div>
+        
+        <div class="p-4">
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-sm font-medium text-gray-700">Export Data</h3>
+              <p class="text-xs text-gray-500 mb-2">Download all your location data and settings</p>
+              <button class="btn-primary">
+                Export Data
+              </button>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-200">
+              <h3 class="text-sm font-medium text-red-600">Delete Account</h3>
+              <p class="text-xs text-gray-500 mb-2">Permanently delete your account and all associated data</p>
+              <button class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@angular/core": "file:latest@angular/common@latest@angular/platform-browser@latest@angular/platform-browser-dynamic@latest@angular/animations@latest@angular/forms@latest@angular/router@latest@angular/compiler@latestrxjs@latestleaflet@latest@types/leaflet@latestzone.js@latest",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
